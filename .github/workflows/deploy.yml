@@ -1,16 +1,16 @@
 name: Executando testes automatizados
-run-name: Robot Tests – ${{ github.event.inputs.repo_name }}
+run-name: ${{ github.event.inputs.repo_name }}
 
 on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: 'Nome completo do repositório (ex: Neurolake/riskpack-credenciais-backend-teste)'
+        description: 'Nome do repositório (ex: Neurolake/riskpack-credenciais-backend-teste)'
         required: true
 
 jobs:
   test:
-    name: Robot Tests – ${{ github.event.inputs.repo_name }}
+    name: ${{ github.event.inputs.repo_name }}
     runs-on: ubuntu-latest
 
     steps:
@@ -34,15 +34,14 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd projeto-privado
-        pip install -r requirements.txt
+        pip install -r projeto-privado/requirements.txt
+        pip install allure-robotframework
         npm install -g allure-commandline
 
     - name: Run Robot Framework Tests with Allure Listener
       run: |
         mkdir -p allure-result
-        cd projeto-privado
-        robot --listener "allure_robotframework:../allure-result" tests/features || true
+        robot --listener "allure_robotframework:allure-result" projeto-privado/tests/features || true
 
     - name: Verificar se resultados foram realmente gerados
       run: |
