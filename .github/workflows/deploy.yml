@@ -1,4 +1,5 @@
 name: Executando testes automatizados
+run-name: ${{ github.event.inputs.repo_name }}
 
 on:
   workflow_dispatch:
