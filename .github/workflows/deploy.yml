@@ -1,4 +1,4 @@
-name: Executando testes automatizados – ${{ github.event.inputs.repo_name }}
+name: Executando testes automatizados
 
 on:
   workflow_dispatch:
