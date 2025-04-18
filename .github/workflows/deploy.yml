@@ -1,11 +1,11 @@
 name: Executando testes automatizados
-run-name: ${{ github.event.inputs.repo_name }}
+run-name: Robot Tests – ${{ github.event.inputs.repo_name }}
 
 on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: 'Nome completo do repositório: (ex: Neurolake/riskpack-credenciais-backend-teste)'
+        description: 'Nome completo do repositório (ex: Neurolake/riskpack-credenciais-backend-teste)'
         required: true
 
 jobs:
@@ -44,16 +44,16 @@ jobs:
         cd projeto-privado
         robot --listener "allure_robotframework:../allure-result" tests/features || true
 
-    - name: Debug - Show Allure result files
+    - name: Verificar se resultados foram realmente gerados
       run: |
-        echo "📂 Conteúdo da pasta allure-result:"
-        ls -l projeto-privado/allure-result || echo "⚠️ Pasta não encontrada ou vazia."
+        echo "🧪 Arquivos na pasta allure-result:"
+        find allure-result -type f || echo "⚠️ Nenhum arquivo encontrado!"
 
     - name: Generate Allure Report with customizations
       run: |
         project_root="$(pwd)"
         output_folder="${project_root}/allure-report/${REPO_SLUG}"
-        results_folder="${project_root}/projeto-privado/allure-result"
+        results_folder="${project_root}/allure-result"
         custom_styles_path="${project_root}/allure-custom/styles.css"
         logo_source_path="${project_root}/allure-custom/neuro-logo.svg"
         favicon_source_path="${project_root}/allure-custom/favicon.ico"
