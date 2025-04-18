@@ -1,0 +1,82 @@
+name: Run Tests for Selected Private Repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: 'Nome completo do repositório: (ex: Neurolake/riskpack-credenciais-backend-teste)'
+        required: true
+
+jobs:
+  test-selected:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repositório público (este)
+      uses: actions/checkout@v3
+
+    - name: Clonar repositório privado selecionado
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.event.inputs.repo_name }}
+        token: ${{ secrets.REPO_PRIVATE_TOKEN }}
+        path: projeto-privado
+
+    - name: Setup Python e instalar dependências
+      run: |
+        cd projeto-privado
+        pip install -r requirements.txt
+        npm install -g allure-commandline
+
+    - name: Executar testes com Robot + Allure
+      run: |
+        cd projeto-privado
+        robot --listener "allure_robotframework:allure-result" tests/features || true
+
+    - name: Gerar e personalizar relatório Allure
+      run: |
+        project_root="$(pwd)"
+        results_folder="${project_root}/projeto-privado/allure-result"
+        output_folder="${project_root}/allure-report"
+        repo_slug=$(echo "${{ github.event.inputs.repo_name }}" | cut -d'/' -f2)
+        publish_dir="${output_folder}/${repo_slug}"
+
+        # Gera o relatório
+        allure generate "$results_folder" --clean --lang br -o "$publish_dir"
+
+        # Personalizações
+        custom_styles_path="${project_root}/allure-custom/styles.css"
+        logo_source_path="${project_root}/allure-custom/neuro-logo.svg"
+        favicon_source_path="${project_root}/allure-custom/favicon.ico"
+        logo_target_folder="$publish_dir/plugin/custom-logo"
+        favicon_target_path="$publish_dir/favicon.ico"
+
+        cp "$custom_styles_path" "$publish_dir/custom.css" || true
+        sed -i '/styles.css/a <link rel="stylesheet" type="text/css" href="custom.css">' "$publish_dir/index.html" || true
+        sed -i 's|<title>Allure Report</title>|<title>Neuro Report</title>|' "$publish_dir/index.html" || true
+
+        summary_file="$publish_dir/widgets/summary.json"
+        if [ -f "$summary_file" ]; then
+          sed -i 's/Allure Report/Neuro Report/g' "$summary_file"
+        fi
+
+        mkdir -p "$logo_target_folder"
+        cp "$logo_source_path" "$logo_target_folder/neuro-logo.svg" || true
+        cp "$favicon_source_path" "$favicon_target_path" || true
+
+        if grep -q '<link rel="icon"' "$publish_dir/index.html"; then
+          sed -i 's|<link rel="icon[^>]*>|<link rel="icon" type="image/x-icon" href="favicon.ico">|' "$publish_dir/index.html" || true
+        else
+          sed -i '/<head>/a <link rel="icon" type="image/x-icon" href="favicon.ico">' "$publish_dir/index.html" || true
+        fi
+
+    - name: Set REPO_SLUG env var
+      run: echo "REPO_SLUG=$(echo '${{ github.event.inputs.repo_name }}' | cut -d'/' -f2)" >> $GITHUB_ENV
+
+    - name: Deploy no GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: allure-report/${{ env.REPO_SLUG }}
+        publish_branch: gh-pages
+        destination_dir: ${{ env.REPO_SLUG }}

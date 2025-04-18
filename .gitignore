@@ -172,3 +172,80 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+# =========================
+# 💻 Sistema Operacional
+# =========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+__MACOSX/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# =========================
+# 🧠 IDEs e editores
+# =========================
+
+# VS Code
+.vscode/
+.history/
+
+# JetBrains (PyCharm, IntelliJ, etc.)
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Atom
+.atom/
+
+# Eclipse
+.project
+.classpath
+.cproject
+.settings/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# =========================
+# 🧪 Testes e relatórios temporários
+# =========================
+
+# Allure
+allure-report/
+allure-results/
+
+# Arquivos gerados por testes
+*.tmp
+*.bak
+*.orig
+
+# =========================
+# 📦 Build/output
+# =========================
+
+# Relatórios de publicação
+*.html
+*.xml
+*.csv
+*.json
