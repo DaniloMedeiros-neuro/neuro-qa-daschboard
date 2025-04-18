@@ -40,8 +40,9 @@ jobs:
 
     - name: Run Robot Framework Tests with Allure Listener
       run: |
+        mkdir -p allure-result
         cd projeto-privado
-        robot --listener "allure_robotframework:allure-result" tests/features || true
+        robot --listener "allure_robotframework:../allure-result" tests/features || true
 
     - name: Debug - Show Allure result files
       run: |
