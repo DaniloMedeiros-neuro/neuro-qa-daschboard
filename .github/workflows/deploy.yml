@@ -40,19 +40,19 @@ jobs:
 
     - name: Run Robot Framework Tests with Allure Listener
       run: |
-        mkdir -p allure-result
-        robot --listener "allure_robotframework:allure-result" projeto-privado/tests/features || true
+        mkdir -p allure-results
+        robot --listener "allure_robotframework:allure-results" projeto-privado/tests/features || true
 
     - name: Verificar se resultados foram realmente gerados
       run: |
-        echo "🧪 Arquivos na pasta allure-result:"
-        find allure-result -type f || echo "⚠️ Nenhum arquivo encontrado!"
+        echo "🧪 Arquivos na pasta allure-results:"
+        find allure-results -type f || echo "⚠️ Nenhum arquivo encontrado!"
 
     - name: Generate Allure Report with customizations
       run: |
         project_root="$(pwd)"
         output_folder="${project_root}/allure-report/${REPO_SLUG}"
-        results_folder="${project_root}/allure-result"
+        results_folder="${project_root}/allure-results"
         custom_styles_path="${project_root}/allure-custom/styles.css"
         logo_source_path="${project_root}/allure-custom/neuro-logo.svg"
         favicon_source_path="${project_root}/allure-custom/favicon.ico"
