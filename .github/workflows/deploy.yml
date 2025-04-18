@@ -1,14 +1,15 @@
-name: Run Robot Tests and Publish Allure Report (Private Repo)
+name: Executando testes automatizados – ${{ github.event.inputs.repo_name && github.event.inputs.repo_name.split('/')[1] }}
 
 on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: 'Nome completo do repositório: (ex: Neurolake/riskpack-credenciais-backend-teste)'
+        description: 'Nome do repositório: (ex: Neurolake/riskpack-credenciais-backend-teste)'
         required: true
 
 jobs:
   test:
+    name: Robot Tests – ${{ github.event.inputs.repo_name && github.event.inputs.repo_name.split('/')[1] }}
     runs-on: ubuntu-latest
 
     steps:
@@ -81,6 +82,7 @@ jobs:
           sed -i 's|<link rel="icon[^>]*>|<link rel="icon" type="image/x-icon" href="favicon.ico">|' "$output_folder/index.html" || true
         else
           sed -i '/<head>/a <link rel="icon" type="image/x-icon" href="favicon.ico">' "$output_folder/index.html" || true
+        fi
 
     - name: Deploy Allure Report to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
